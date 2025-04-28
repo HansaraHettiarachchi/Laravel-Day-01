@@ -17,6 +17,9 @@ class NewUserController extends Controller
         $rs = NewUser::where('password', $ps)->where('email', $email)->first();
 
         if ($rs) {
+
+            session(['user' => $rs]);
+
             return "User Found";
         } else {
             return "User Not Found";
