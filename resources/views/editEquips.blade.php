@@ -10,27 +10,32 @@
         integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-    <title>Document</title>
+    <title>Edit Equipments</title>
 </head>
 
 <body>
 
     <div class="container-fluid">
-        <h2 class="text-success mt-4 ms-4">Equipments</h2>
+        <h2 class="text-success mt-4 ms-4">Edit Equipments</h2>
         <div class="col-8 offset-2 my-5">
-            {!! Form::open(['url' => 'insert-equips', 'method' => 'POST']) !!}
+            {!! Form::open(['url' => 'edit-equip-submit', 'method' => 'POST']) !!}
             <div class="row g-3">
                 <div class="col">
                     <label for="inputEmail4" class="form-label fw-4">Code</label>
-                    <input type="text" class="form-control" id="inputEmail4" name="code" required>
+                    <input type="text" class="form-control" id="inputEmail4" name="code" required
+                        value="{{ $equip->code }}">
+                    <input type="hidden" class="form-control" id="equipId" name="equipId" required
+                        value="{{ $equip->id }}">
                 </div>
                 <div class="col">
                     <label for="inputPassword4" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="inputPassword4" name="name" required>
+                    <input type="text" class="form-control" id="inputPassword4" name="name" required
+                        value="{{ $equip->name }}">
                 </div>
                 <div class="col">
                     <label for="inputAddress" class="form-label">Price</label>
-                    <input type="number" class="form-control" id="inputAddress" name="price" required>
+                    <input type="number" class="form-control" id="inputAddress" name="price" required
+                        value="{{ $equip->price }}">
                 </div>
                 <div class="col">
                     <label for="catName" class="form-label">Price</label>
@@ -49,7 +54,7 @@
                 <label for="product">Selete Product</label>
                 <div class="col-10">
                     <select id="productSelect" class="form-control">
-                        <option value="0" data-id='0' selected>Select</option>
+                        {{-- <option value="0" data-id='0' selected>Select</option> --}}
                         @foreach ($products as $item)
                             <option value="{{ $item->id }}" data-id="{{ $item->id }}">
                                 {{ $item->name }}
@@ -76,6 +81,55 @@
                         </tr>
                     </thead>
                     <tbody id="tbBodyData">
+
+                        <?php
+                        \Log::channel('myLog')->info($data[0]);
+                        
+                        ?>
+                        @foreach ($data as $key => $item)
+                            {{-- <tr>
+                                <th> {{ $key + 1 }}</th>
+                                <td>{{ $item['productName'] }}</td>
+                                <td>{{ $item['code'] }}</td>
+                                <td>{{ $item['qty'] }}</td>
+                                <td>{{ $item['cost'] }}</td>
+                                <td>{{ $item['sub_total'] }}</td>
+                                <td>
+                                    <button type="button" class="form-control btn btn-danger rBtn"
+                                        data-id='tbRow_${data.id}'>Remove</button>
+                                </td>
+                            </tr> --}}
+
+                            <tr id = 'tbRow_{{ $item['pId'] }}'>
+                                <th scope="row">
+                                    {{ $key + 1 }}
+                                </th>
+                                <td>
+                                    <input type="hidden" name = 'rPId[]' value='{{ $item['pId'] }}'>
+
+                                    {{ $item['productName'] }}
+                                </td>
+                                <td>{{ $item['code'] }}</td>
+                                <td>
+                                    <input type="number" class="form-control rQty text-center"
+                                        value='{{ $item['qty'] }}' name = "rQty[]">
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control rcost text-center" name = "rCost[]"
+                                        value='{{ $item['cost'] }}'>
+                                    <input type="hidden" class="form-control rcost text-center" name = "eHPId[]"
+                                        value='{{ $item['cost'] }}'>
+                                </td>
+                                <td class="subTot text-center">
+
+                                    {{ $item['sub_total'] }}</td>
+                                <td>
+                                    <button type="button" class="form-control btn btn-danger rBtn"
+                                        data-id='tbRow_{{ $item['pId'] }}'>Remove</button>
+
+                                </td>
+                            </tr>
+                        @endforeach
 
                     </tbody>
 

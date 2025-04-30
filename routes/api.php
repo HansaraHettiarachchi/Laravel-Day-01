@@ -1,5 +1,9 @@
 <?php
 
+// use App\Http\Controllers\api\NewProductController;
+
+use App\Http\Controllers\api\NewEquipController;
+use App\Http\Controllers\api\NewProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +18,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+
+//     return $request->user();
+// });
+
+
+
+Route::middleware('test.token')->group(function () {
+
+
+    Route::controller(NewProductController::class)->group(function () {
+        Route::post('insert-product', 'insertProduct');
+        // Route::get('getPR-list', 'viewEquipmentList');
+    });
+
+    Route::controller(NewEquipController::class)->group(function () {
+        Route::post('insert-equip', 'insertEquip');
+        // Route::get('getPR-list', 'viewEquipmentList');
+    });
+
+    // Add more routes...
 });

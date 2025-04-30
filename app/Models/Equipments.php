@@ -15,6 +15,8 @@ class Equipments extends Model
         "price",
         "tQty",
         "sub_tot",
+        "cat_id",
+        "status",
         "created_user"
     ];
 }

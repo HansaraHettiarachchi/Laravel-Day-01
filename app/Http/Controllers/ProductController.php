@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -131,5 +132,165 @@ class ProductController extends Controller
         } else {
             return "Procut not found";
         }
+    }
+
+    static function getProductByAny($id, $column)
+    {
+        $product = Product::where('status', 'Active')->where('id', $id)->first()->$column;
+
+        if ($product) {
+            return $product;
+        } else {
+            return "Procut not found";
+        }
+    }
+
+    static function getProductByAny2($id, $column)
+    {
+        $product = Product::where('status', 'Active')->where($column, $id)->first();
+
+        if ($product) {
+            return $product;
+        } else {
+            return "Procut not found";
+        }
+    }
+
+
+
+    function importProducts(Request $request)
+    {
+        $file = $request->file('data');
+        $csvData = file_get_contents($file->getRealPath());
+
+        if (empty($csvData)) {
+            return json_encode([
+                'status' => 'error',
+                'data' => '<p class="text-danger text-center my-3">Empty file</p>'
+            ]);
+        }
+
+        $rows = array_map('str_getcsv', explode("\n", $csvData));
+
+
+        if (count($rows) < 1 || (count($rows) === 1 && empty($rows[0][0]))) {
+            return json_encode([
+                'status' => 'error',
+                'data' => '<p class="text-danger text-center my-3">Empty file or no valid data</p>'
+            ]);
+        }
+
+        foreach ($rows as $row) {
+            if ($this->checkArr($row, $rows)) {
+                return json_encode([
+                    'status' => 'error',
+                    'data' => '<p class="text-danger text-center my-3">Empty file</p>'
+                ]);
+            }
+        }
+
+        array_shift($rows);
+
+        $error = [];
+
+        foreach ($rows as $key => $row) {
+            if (empty($row) || (count($row) === 1 && empty($row[0]))) {
+                continue;
+            }
+
+            $row = array_pad($row, 4, null);
+
+            $productName = $row[0] ?? null;
+            $productCode = $row[1] ?? null;
+            $productCost = $row[2] ?? 0;
+            $productPrice = $row[3] ?? 0;
+
+            if (empty($productName)) {
+                $error[] = 'Product Name is Empty at row ' . $key + 1;
+            } elseif (empty($productCode)) {
+                $error[] = 'Product Code is Empty at row ' . $key + 1;
+            } elseif (empty($productCost)) {
+                $error[] = 'Product Cost is Empty at row ' . $key + 1;
+            } elseif (empty($productPrice)) {
+                $error[] = 'Product Price is Empty at row ' . $key + 1;
+            }
+        }
+
+        // Log::channel('myLog')->info($error);
+
+        if (count($error) > 0) {
+
+            $rest = ' ';
+
+            foreach ($error as $key => $value) {
+                $rest .= '
+                      <tr>
+                        <th scope="row">' . $key + 1 . '</th>
+                        <td class="text-danger">' . $value . '</td>
+                     </tr>
+                ';
+            }
+
+            $deign = '<table class="table border border-1 my-3">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">No</th>
+                                        <th scope="col">Error At</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                   ' . $rest . '
+                                </tbody>
+                            </table>';
+
+            Log::channel('myLog')->info($deign);
+
+            return json_encode([
+                'status' => 'error',
+                'data' => $deign
+            ]);
+        }
+
+        foreach ($rows as $row) {
+            if (empty($row) || (count($row) === 1 && empty($row[0]))) {
+                continue;
+            }
+
+            $row = array_pad($row, 4, null);
+
+            $product = new Product();
+            $product->name = $row[0] ?? null;
+            $product->code = $row[1] ?? null;
+            $product->cost = $row[2] ?? 0;
+            $product->price = $row[3] ?? 0;
+            $product->status = "Active";
+            $product->save();
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => "Operation Successful"
+        ]);
+    }
+
+    function checkArr($arr, $totArr)
+    {
+        $i = 0;
+        foreach ($arr as $key => $value) {
+            if ($value == null) {
+                $i++;
+            }
+        }
+
+        Log::channel('myLog')->info($i);
+        Log::channel('myLog')->info("=================================");
+        Log::channel('myLog')->info(count($arr));
+
+
+        if (count($arr) == 1 && $i == 1 && count($totArr) == 2) {
+            return true;
+        }
+
+        return false;
     }
 }

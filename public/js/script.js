@@ -12,24 +12,49 @@ $(document).ready(function () {
 
         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
 
+        //Api approch
+
         $.ajax({
             type: "POST",
-            url: "/save-product",
+            url: "/api/insert-product",
             data: formData,
             processData: false,
             contentType: false,
             success: (response) => {
-                if (response == "Product Already exist with this code") {
-                    alert(response);
-                } else if (response == "Success") {
-                    window.location.href = '/product-list';
-                }
+                console.log(response);
+
+                // if (response == "Product Already exist with this code") {
+                //     alert(response);
+                // } else if (response == "Success") {
+                //     window.location.href = '/product-list';
+                // }
             },
             error: (error) => {
                 console.log(error);
                 alert('Something went wrong');
             }
         });
+
+        //Normal Approch
+
+        // $.ajax({
+        //     type: "POST",
+        //     url: "/save-product",
+        //     data: formData,
+        //     processData: false,
+        //     contentType: false,
+        //     success: (response) => {
+        //         if (response == "Product Already exist with this code") {
+        //             alert(response);
+        //         } else if (response == "Success") {
+        //             window.location.href = '/product-list';
+        //         }
+        //     },
+        //     error: (error) => {
+        //         console.log(error);
+        //         alert('Something went wrong');
+        //     }
+        // });
     });
 
     $('#productTable').DataTable({

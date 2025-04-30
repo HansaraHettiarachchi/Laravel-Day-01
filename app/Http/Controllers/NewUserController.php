@@ -16,6 +16,8 @@ class NewUserController extends Controller
 
         $rs = NewUser::where('password', $ps)->where('email', $email)->first();
 
+        Log::channel('myLog')->info($rs);
+
         if ($rs) {
 
             session(['user' => $rs]);

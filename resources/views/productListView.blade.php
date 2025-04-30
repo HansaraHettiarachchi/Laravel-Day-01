@@ -15,7 +15,11 @@
 </head>
 
 <body>
-    <div class="container-fluid">
+    <div class="container my-4">
+        <div>
+            <button class="btn btn-warning float-end" type="button" data-bs-toggle="modal"
+                data-bs-target="#productModal">Import</button>
+        </div>
         <table class="table" id="productTable">
             <thead>
                 <tr>
@@ -35,6 +39,40 @@
         </table>
     </div>
 
+    <div class="">
+
+        <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="productModalLabel">Import Products</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="rounded-5 border border-2 mx-4 d">
+                            <div class="d-flex align-items-center justify-content-center" id="imagePreview"
+                                style="height: 200px">
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            </div>
+                            <input type="file" class="form-control d-none" id="imageUpload" name ="imageUpload"
+                                accept=".csv, text/csv" required>
+                        </div>
+
+                        <div class="" id="errorTable">
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-warning ms-3 btnSubmitImport"
+                            id="btnSubmitImport">Import</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- Form Submitting In Laravel --}}
     {{-- <div style=" border-radius: 20px;" class="modal-content">
@@ -87,6 +125,57 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
 
+
+    <script>
+        $(document).ready(function() {
+
+            $('#productModal').on('show.bs.modal', function(e) {
+                $('#errorTable').html('');
+                $('#imageUpload').val('');
+            });
+
+            $('.btnSubmitImport').on('click', function() {
+
+                const file = $('#imageUpload')[0].files[0];
+
+                if (file == null) {
+                    alert("Please select file");
+                    return;
+                }
+
+                var formData = new FormData();
+                formData.append('data', file);
+                formData.append('_token', '{{ csrf_token() }}');
+
+                $.ajax({
+                    url: "/import-products",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(rs) {
+                        data = JSON.parse(rs);
+
+
+                        if (data.status == 'error') {
+                            $('#errorTable').html(data.data);
+                        } else if (data.status == 'success') {
+                            alert(data.data);
+                            window.location.reload();
+                        } else {
+                            alert("An Error Conducted");
+                        }
+
+                    },
+                    error: function(e) {
+                        console.log(e);
+
+                    }
+                });
+            });
+
+        });
+    </script>
     <script src="{{ asset('/js/script.js') }}"></script>
 </body>
 
