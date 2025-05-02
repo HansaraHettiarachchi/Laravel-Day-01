@@ -1,3 +1,5 @@
+@include('header')
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Product</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -12,6 +15,10 @@
 </head>
 
 <body class="bg-light">
+
+    @yield('content')
+
+
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -22,7 +29,13 @@
                             <div class="mx-auto bg-success" style="height: 3px; width: 80px;"></div>
                         </h1>
 
-                        {!! Form::open(['url' => 'update-products', 'method' => 'POST', 'class' => 'needs-validation', 'novalidate' , 'enctype' => 'multipart/form-data']) !!}
+                        {!! Form::open([
+                            'url' => 'update-products',
+                            'method' => 'POST',
+                            'class' => 'needs-validation',
+                            'novalidate',
+                            'enctype' => 'multipart/form-data',
+                        ]) !!}
 
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -108,6 +121,9 @@
             })
         })()
     </script>
+
+    <script src="{{ asset('/js/logout.js') }}"></script>
+
 </body>
 
 </html>

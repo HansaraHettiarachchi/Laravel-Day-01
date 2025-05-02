@@ -13,7 +13,6 @@ class ProductController extends Controller
     function createProduct(Request $request)
     {
         $data = $request->all();
-
         $existingProduct = Product::where('code', $data['code'])->first();
 
         if ($existingProduct !== null) {
@@ -29,6 +28,7 @@ class ProductController extends Controller
         $product->code = $data['code'];
         $product->cost = $data['cost'];
         $product->price = $data['price'];
+        $product->status = "Active";
         $product->img_location =  $imageName;
         $product->save();
 
@@ -107,10 +107,11 @@ class ProductController extends Controller
 
     function deleteProducts(Request $request)
     {
+        // Log::channel("myLog")->info($request->input("id"));
+
         $product = Product::find($request->input("id"));
 
         $product->status = "Deactive";
-        // Log::channel("myLog")->info("public/products/" . $product->img_location);
 
         if ($product->img_location !== null) {
             Storage::delete("public/products/" . $product->img_location);
@@ -120,7 +121,7 @@ class ProductController extends Controller
         $product->save();
 
 
-        return "Product Deleted Succesfully";
+        return "Product Deleted Successfully";
     }
 
     function getProductById(Request $request)

@@ -1,3 +1,6 @@
+@include('header')
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,11 +10,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
     <title>Document</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.css">
 </head>
 
 <body>
+    @yield('content')
+
     <div class="container mt-5">
         <h2>Bootstrap 5 Table Example</h2>
         <table class="table table-bordered table-hover" id="tbData">
@@ -163,6 +169,9 @@
             });
         });
     </script>
+
+    <script src="{{ asset('/js/logout.js') }}"></script>
+
 
 </body>
 

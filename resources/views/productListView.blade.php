@@ -1,3 +1,5 @@
+@include('header')
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,10 +17,13 @@
 </head>
 
 <body>
+    @yield('content')
+
     <div class="container my-4">
         <div>
             <button class="btn btn-warning float-end" type="button" data-bs-toggle="modal"
                 data-bs-target="#productModal">Import</button>
+            <button class="btn btn-success float-end me-3" id="createProduct" type="button">Create Product</button>
         </div>
         <table class="table" id="productTable">
             <thead>
@@ -174,9 +179,15 @@
                 });
             });
 
+
+            $('#createProduct').click(() => {
+                window.location = "/create-product";
+            });
+
         });
     </script>
     <script src="{{ asset('/js/script.js') }}"></script>
+    <script src="{{ asset('/js/logout.js') }}"></script>
 </body>
 
 </html>

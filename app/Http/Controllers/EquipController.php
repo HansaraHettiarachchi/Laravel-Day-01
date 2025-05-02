@@ -7,6 +7,7 @@ use App\Models\Equipments;
 use App\Models\Equipments_Has_Product;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Code;
@@ -24,7 +25,7 @@ class EquipController extends Controller
     function insertEquips(Request $request)
     {
         $data = $request->all();
-        // Log::channel("myLog")->info($request->session()->get('user')->id);
+        // Log::channel("myLog")->info($data);
 
         if (!$request->has('rQty')) {
             return "Please Select Equipments";
@@ -47,7 +48,7 @@ class EquipController extends Controller
             $equip->cat_id = $data['catName'];
             $equip->tQty = array_sum($data['rQty']);
             $equip->sub_tot = array_sum($data['rCost']);
-            $equip->created_user = $request->session()->get('user')->id;
+            $equip->created_user = Auth::guard('new_user')->user()->id;
             $equip->save();
 
             for ($i = 0; $i < count($data['rQty']); $i++) {
@@ -55,10 +56,6 @@ class EquipController extends Controller
 
                 $equip_has_product->qty = $data['rQty'][$i];
                 $equip_has_product->cost = $data['rCost'][$i];
-                if ($i == 3) {
-                    100 / 0;
-                }
-
                 $equip_has_product->product_id = $data['rPId'][$i];
                 $equip_has_product->equipments_id = $equip->id;
                 $equip_has_product->sub_total = $data['rCost'][$i] * $data['rQty'][$i];
@@ -138,7 +135,8 @@ class EquipController extends Controller
         $data->status = "Deactive";
         $data->save();
 
-        return view('equipmentList');
+        $categories = Categories::all();
+        return view('equipmentList', compact('categories'));
     }
 
     function getEquipDetails(Request $request)
@@ -170,7 +168,6 @@ class EquipController extends Controller
 
     function editEquip(Request $request)
     {
-
         $data = $request->all();
         // Log::channel("myLog")->info($data);
 
@@ -200,7 +197,7 @@ class EquipController extends Controller
         $equip->cat_id = $data['catName'];
         $equip->tQty = array_sum($data['rQty']);
         $equip->sub_tot = array_sum($data['rCost']);
-        $equip->created_user = $request->session()->get('user')->id;
+        $equip->created_user = Auth::guard('new_user')->user()->id;
         $equip->save();
 
         $equip_has_product2 =  Equipments_Has_Product::where('equipments_id', $data['equipId'])->get();
@@ -221,7 +218,8 @@ class EquipController extends Controller
             $equip_has_product->save();
         }
 
-        return view('equipmentList');
+        $categories = Categories::all();
+        return view('equipmentList', compact('categories'));
     }
 
     function loadEquipItems(Request $request)
@@ -229,8 +227,6 @@ class EquipController extends Controller
         $data = $request->all();
 
         $equips = Equipments::where('code', $data['code'])->first();
-
-        Log::channel('myLog')->info($equips);
 
         $equip_has_product =  Equipments_Has_Product::where('equipments_id', $equips['id'])->get();
 
@@ -248,7 +244,6 @@ class EquipController extends Controller
                 "subtot" => $value->sub_total,
             ];
         }
-        // Log::channel('myLog')->info($products);
 
         return json_encode($products);
     }

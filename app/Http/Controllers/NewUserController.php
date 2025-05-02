@@ -5,23 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\NewUser;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class NewUserController extends Controller
 {
     function submitLogin(Request $request)
     {
-        $email = $request->input('email');
-        $ps = $request->input('ps');
+        // Log::channel('myLog')->info($rs);
 
-        $rs = NewUser::where('password', $ps)->where('email', $email)->first();
+        $credentials = $request->only('email', 'password');
 
-        Log::channel('myLog')->info($rs);
-
-        if ($rs) {
-
-            session(['user' => $rs]);
-
+        if (Auth::guard('new_user')->attempt($credentials)) {
+            $request->session()->regenerate();
             return "User Found";
         } else {
             return "User Not Found";
@@ -39,13 +36,15 @@ class NewUserController extends Controller
     function createUser(Request $req)
     {
         $email = $req->input("e");
-        $ps = $req->input("ps");
+        $ps = Hash::make($req->input("ps"));
+        // $ps = $req->input("ps");
         $name = $req->input("n");
         $add = $req->input("add");
 
         $user = new NewUser();
         $user->name = $name;
         $user->email = $email;
+
         $user->password = $ps;
         $user->address = $add;
         $user->save();

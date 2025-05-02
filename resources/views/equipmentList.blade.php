@@ -1,3 +1,5 @@
+@include('header')
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,6 +22,8 @@
 </head>
 
 <body>
+    @yield('content')
+
     <div class="container">
 
         <div class="my-4 row">
@@ -324,6 +328,8 @@
 
         });
     </script>
+    <script src="{{ asset('/js/logout.js') }}"></script>
+
 </body>
 
 </html>

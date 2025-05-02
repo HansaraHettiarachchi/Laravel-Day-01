@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EquipController;
 use App\Http\Controllers\NewUserController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SessionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,7 +20,7 @@ Route::get('/userCreate', function () {
 });
 
 Route::controller(NewUserController::class)->group(function () {
-    Route::get('user-list', 'userList');
+    // Route::get('user-list', 'userList');
     Route::get("edit-user", "editUser");
     Route::post('submit-login', 'submitLogin');
     Route::post('create-user', 'createUser');
@@ -29,6 +30,11 @@ Route::controller(NewUserController::class)->group(function () {
 });
 
 Route::middleware('checkSession.token')->group(function () {
+
+    Route::get('user-list', function () {
+        return view('userList');
+    });
+
     Route::get('/create-product', function () {
         return view('createProduct');
     });
@@ -62,7 +68,7 @@ Route::middleware('checkSession.token')->group(function () {
 
 
     Route::controller(EquipController::class)->group(function () {
-        Route::get('equipments-create', 'createEquipments');
+        Route::GET('equipments-create', 'createEquipments');
         Route::POST('insert-equips', 'insertEquips');
         Route::POST('load-equips', 'loadEquipsList');
         Route::GET('equipment-list', 'viewEquipments');
@@ -72,5 +78,9 @@ Route::middleware('checkSession.token')->group(function () {
         Route::POST('load-equips-items', 'loadEquipItems');
 
         // Route::get('getPR-list', 'viewEquipmentList');
+    });
+
+    Route::controller(SessionController::class)->group(function () {
+        Route::GET('distory-session', 'distorySession');
     });
 });

@@ -1,3 +1,5 @@
+@include('header')
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,6 +16,7 @@
 </head>
 
 <body>
+    @yield('content')
 
     <div class="container-fluid">
         <h2 class="text-success mt-4 ms-4">Equipments</h2>
@@ -250,6 +253,8 @@
             });
         });
     </script>
+    <script src="{{ asset('/js/logout.js') }}"></script>
+
 </body>
 
 </html>

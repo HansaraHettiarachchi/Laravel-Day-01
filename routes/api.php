@@ -40,3 +40,4 @@ Route::middleware('test.token')->group(function () {
 
     // Add more routes...
 });
+
