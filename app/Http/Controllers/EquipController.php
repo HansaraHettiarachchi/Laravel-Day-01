@@ -225,6 +225,7 @@ class EquipController extends Controller
     function loadEquipItems(Request $request)
     {
         $data = $request->all();
+        // Log::channel('myLog')->info( $data);
 
         $equips = Equipments::where('code', $data['code'])->first();
 

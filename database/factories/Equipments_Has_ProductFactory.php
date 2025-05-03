@@ -26,7 +26,7 @@ class Equipments_Has_ProductFactory extends Factory
             'sub_total' => function (array $attributes) {
                 return $attributes['qty'] * $attributes['cost'];
             },
-            'product_id' => Product::inRandomOrder()->first()->id ?? Product::factory(),
+            'product_id' => Product::factory()->create()->id,
             'equipments_id' => $this->faker->numberBetween(1, 50),
         ];
     }

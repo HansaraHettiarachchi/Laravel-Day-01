@@ -21,7 +21,7 @@ class NewUserFactory extends Factory
             'address' => $this->faker->address(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => bcrypt('password'),
-            'status' => $this->faker->randomElement(['Active', 'Deactive']),
+            'status' => 'Active',
         ];
     }
 }

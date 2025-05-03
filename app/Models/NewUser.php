@@ -13,6 +13,7 @@ class NewUser extends Authenticatable
         "address",
         "email",
         "password",
+        "loged_time",
         "status"
     ];
 }

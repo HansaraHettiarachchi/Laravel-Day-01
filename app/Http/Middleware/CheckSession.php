@@ -24,6 +24,9 @@ class CheckSession
         if (!Auth::guard('new_user')->check()) {
             return redirect('/login');
         }
+        if (Auth::guard('new_user')->user()->status != "Active") {
+            return redirect('/login');
+        }
 
         return $next($request);
     }

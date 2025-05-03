@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\NewUser;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,12 +14,18 @@ class NewUserController extends Controller
 {
     function submitLogin(Request $request)
     {
-        // Log::channel('myLog')->info($rs);
 
         $credentials = $request->only('email', 'password');
+        // Log::channel('myLog')->info($credentials);
 
         if (Auth::guard('new_user')->attempt($credentials)) {
+
             $request->session()->regenerate();
+
+            $user = NewUser::find(Auth::guard('new_user')->user()->id);
+            $user->loged_time = Carbon::now();
+            $user->save();
+
             return "User Found";
         } else {
             return "User Not Found";
@@ -93,6 +100,8 @@ class NewUserController extends Controller
         $user = NewUser::find($req->input("id"));
         $user->status = "Deactive";
         $user->save();
+
+        return "Deletion Successful";
     }
 
     function userData(Request $req)

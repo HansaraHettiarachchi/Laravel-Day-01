@@ -18,7 +18,8 @@ class ProductListViewTest extends TestCase
      */
     public function test_example(): void
     {
-        $response = $this->get('/product-list');
+        $user = NewUSer::factory()->create();
+        $response = $this->actingAs($user, "new_user")->get('/product-list');
         $response->assertStatus(200);
         $response->assertViewIs('productListView');
     }
@@ -27,11 +28,12 @@ class ProductListViewTest extends TestCase
     {
         $testData = Product::factory()->make()->toArray();
 
-
         $file = \Illuminate\Http\UploadedFile::fake()
             ->create('product.txt', 100);
 
-        $rs =  $this->post('/save-product', array_merge($testData, [
+        $user = NewUSer::factory()->create();
+
+        $rs =  $this->actingAs($user, "new_user")->post('/save-product', array_merge($testData, [
             'imageUpload' => $file
         ]));
 
@@ -57,6 +59,7 @@ class ProductListViewTest extends TestCase
     public function test_update(): void
     {
         $testData = Product::factory()->create()->toArray();
+        $user = NewUSer::factory()->create();
 
 
         $file = \Illuminate\Http\UploadedFile::fake()
@@ -64,7 +67,7 @@ class ProductListViewTest extends TestCase
 
         // Log::channel("myLog")->info($testData);
 
-        $rs =  $this->post('/update-products', array_merge($testData, [
+        $rs =  $this->actingAs($user, "new_user")->post('/update-products', array_merge($testData, [
             'imageUpload' => $file
         ]));
 
@@ -93,8 +96,9 @@ class ProductListViewTest extends TestCase
             'status' => 'Active',
             'img_location' => str_replace('public/products/', '', $path)
         ]);
+        $user = NewUSer::factory()->create();
 
-        $response = $this->get('/delete-products?id=' . $product->id);
+        $response = $this->actingAs($user, "new_user")->get('/delete-products?id=' . $product->id);
 
         $response->assertStatus(200);
         $response->assertSee("Product Deleted Successfully");
